@@ -3,11 +3,13 @@ package com.example.instagramdetector.overlay
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.example.instagramdetector.detox.DetoxPrefs
 import com.example.instagramdetector.util.canDrawOverlays
 
 object OverlayController {
 
     fun show(context: Context, packageName: String) {
+        if (!DetoxPrefs.isProtectionEnabled(context)) return
         if (!context.canDrawOverlays()) return
         val intent = Intent(context, OverlayService::class.java).apply {
             action = OverlayService.ACTION_SHOW
@@ -17,6 +19,7 @@ object OverlayController {
     }
 
     fun showUsageTimeExpired(context: Context, packageName: String, blockSeconds: Int) {
+        if (!DetoxPrefs.isProtectionEnabled(context)) return
         if (!context.canDrawOverlays()) return
         val intent = Intent(context, OverlayService::class.java).apply {
             action = OverlayService.ACTION_SHOW_USAGE_TIME_EXPIRED
@@ -27,6 +30,7 @@ object OverlayController {
     }
 
     fun showShortFormBreak(context: Context, packageName: String) {
+        if (!DetoxPrefs.isProtectionEnabled(context)) return
         if (!context.canDrawOverlays()) return
         val intent = Intent(context, OverlayService::class.java).apply {
             action = OverlayService.ACTION_SHOW_SHORT_FORM_BREAK

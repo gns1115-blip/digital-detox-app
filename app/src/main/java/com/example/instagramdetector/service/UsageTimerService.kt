@@ -11,6 +11,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.example.instagramdetector.InstagramDetectorApplication
 import com.example.instagramdetector.R
+import com.example.instagramdetector.detox.DetoxPrefs
 import com.example.instagramdetector.overlay.AppSessionGate
 import com.example.instagramdetector.overlay.OverlayController
 import com.example.instagramdetector.util.VibrationHelper
@@ -67,21 +68,31 @@ class UsageTimerService : Service() {
         val app = application as InstagramDetectorApplication
         val usageDurationMs = AppSessionGate.consumeSessionUsageDuration()
 
-        VibrationHelper.vibrate(applicationContext)
-        AppSessionGate.revokeSessionIfActive()
-        AccessibilityAppCloser.goHome()
-        AppLaunchBlocker.startBlock(AppLaunchBlocker.DEFAULT_BLOCK_SECONDS)
+        val protectionEnabled = DetoxPrefs.isProtectionEnabled(applicationContext)
+        if (protectionEnabled) {
+            VibrationHelper.vibrate(applicationContext)
+            AppSessionGate.revokeSessionIfActive()
+            AccessibilityAppCloser.goHome()
+            AppLaunchBlocker.startBlock(AppLaunchBlocker.DEFAULT_BLOCK_SECONDS)
+        } else {
+            AppSessionGate.revokeSessionIfActive()
+            AppLaunchBlocker.clear()
+        }
 
         serviceScope.launch(Dispatchers.IO) {
             app.appStatsRepository.addUsageTime(usageDurationMs)
-            app.appStatsRepository.recordBlock()
+            if (protectionEnabled) {
+                app.appStatsRepository.recordBlock()
+            }
         }
 
-        OverlayController.showUsageTimeExpired(
-            context = applicationContext,
-            packageName = packageName,
-            blockSeconds = AppLaunchBlocker.DEFAULT_BLOCK_SECONDS,
-        )
+        if (protectionEnabled) {
+            OverlayController.showUsageTimeExpired(
+                context = applicationContext,
+                packageName = packageName,
+                blockSeconds = AppLaunchBlocker.DEFAULT_BLOCK_SECONDS,
+            )
+        }
     }
 
     private fun stopCountdownAndSelf() {

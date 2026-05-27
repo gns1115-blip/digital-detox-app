@@ -1,0 +1,208 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.instagramdetector"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="35" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->D:\Android_DEV\app\src\main\AndroidManifest.xml:4:5-78
+11-->D:\Android_DEV\app\src\main\AndroidManifest.xml:4:22-75
+12    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+12-->D:\Android_DEV\app\src\main\AndroidManifest.xml:5:5-77
+12-->D:\Android_DEV\app\src\main\AndroidManifest.xml:5:22-74
+13    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+13-->D:\Android_DEV\app\src\main\AndroidManifest.xml:6:5-89
+13-->D:\Android_DEV\app\src\main\AndroidManifest.xml:6:22-86
+14    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+14-->D:\Android_DEV\app\src\main\AndroidManifest.xml:7:5-77
+14-->D:\Android_DEV\app\src\main\AndroidManifest.xml:7:22-74
+15    <uses-permission android:name="android.permission.VIBRATE" />
+15-->D:\Android_DEV\app\src\main\AndroidManifest.xml:8:5-66
+15-->D:\Android_DEV\app\src\main\AndroidManifest.xml:8:22-63
+16
+17    <permission
+17-->[androidx.core:core:1.15.0] C:\Users\PHS\.gradle\caches\8.9\transforms\318be529f5022eb5471dc4b0f8d00275\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
+18        android:name="com.example.instagramdetector.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+18-->[androidx.core:core:1.15.0] C:\Users\PHS\.gradle\caches\8.9\transforms\318be529f5022eb5471dc4b0f8d00275\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
+19        android:protectionLevel="signature" />
+19-->[androidx.core:core:1.15.0] C:\Users\PHS\.gradle\caches\8.9\transforms\318be529f5022eb5471dc4b0f8d00275\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
+20
+21    <uses-permission android:name="com.example.instagramdetector.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+21-->[androidx.core:core:1.15.0] C:\Users\PHS\.gradle\caches\8.9\transforms\318be529f5022eb5471dc4b0f8d00275\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
+21-->[androidx.core:core:1.15.0] C:\Users\PHS\.gradle\caches\8.9\transforms\318be529f5022eb5471dc4b0f8d00275\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
+22
+23    <application
+23-->D:\Android_DEV\app\src\main\AndroidManifest.xml:10:5-60:19
+24        android:name="com.example.instagramdetector.InstagramDetectorApplication"
+24-->D:\Android_DEV\app\src\main\AndroidManifest.xml:11:9-53
+25        android:allowBackup="true"
+25-->D:\Android_DEV\app\src\main\AndroidManifest.xml:12:9-35
+26        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+26-->[androidx.core:core:1.15.0] C:\Users\PHS\.gradle\caches\8.9\transforms\318be529f5022eb5471dc4b0f8d00275\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
+27        android:debuggable="true"
+28        android:extractNativeLibs="false"
+29        android:icon="@mipmap/ic_launcher"
+29-->D:\Android_DEV\app\src\main\AndroidManifest.xml:13:9-43
+30        android:label="@string/app_name"
+30-->D:\Android_DEV\app\src\main\AndroidManifest.xml:14:9-41
+31        android:roundIcon="@mipmap/ic_launcher_round"
+31-->D:\Android_DEV\app\src\main\AndroidManifest.xml:15:9-54
+32        android:supportsRtl="true"
+32-->D:\Android_DEV\app\src\main\AndroidManifest.xml:16:9-35
+33        android:testOnly="true"
+34        android:theme="@style/Theme.InstagramDetector" >
+34-->D:\Android_DEV\app\src\main\AndroidManifest.xml:17:9-55
+35        <activity
+35-->D:\Android_DEV\app\src\main\AndroidManifest.xml:19:9-27:20
+36            android:name="com.example.instagramdetector.ui.MainActivity"
+36-->D:\Android_DEV\app\src\main\AndroidManifest.xml:20:13-44
+37            android:exported="true"
+37-->D:\Android_DEV\app\src\main\AndroidManifest.xml:21:13-36
+38            android:theme="@style/Theme.InstagramDetector" >
+38-->D:\Android_DEV\app\src\main\AndroidManifest.xml:22:13-59
+39            <intent-filter>
+39-->D:\Android_DEV\app\src\main\AndroidManifest.xml:23:13-26:29
+40                <action android:name="android.intent.action.MAIN" />
+40-->D:\Android_DEV\app\src\main\AndroidManifest.xml:24:17-69
+40-->D:\Android_DEV\app\src\main\AndroidManifest.xml:24:25-66
+41
+42                <category android:name="android.intent.category.LAUNCHER" />
+42-->D:\Android_DEV\app\src\main\AndroidManifest.xml:25:17-77
+42-->D:\Android_DEV\app\src\main\AndroidManifest.xml:25:27-74
+43            </intent-filter>
+44        </activity>
+45
+46        <service
+46-->D:\Android_DEV\app\src\main\AndroidManifest.xml:29:9-41:19
+47            android:name="com.example.instagramdetector.service.AppAccessibilityService"
+47-->D:\Android_DEV\app\src\main\AndroidManifest.xml:30:13-60
+48            android:exported="false"
+48-->D:\Android_DEV\app\src\main\AndroidManifest.xml:31:13-37
+49            android:label="@string/accessibility_service_label"
+49-->D:\Android_DEV\app\src\main\AndroidManifest.xml:32:13-64
+50            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+50-->D:\Android_DEV\app\src\main\AndroidManifest.xml:33:13-79
+51            <intent-filter>
+51-->D:\Android_DEV\app\src\main\AndroidManifest.xml:34:13-36:29
+52                <action android:name="android.accessibilityservice.AccessibilityService" />
+52-->D:\Android_DEV\app\src\main\AndroidManifest.xml:35:17-92
+52-->D:\Android_DEV\app\src\main\AndroidManifest.xml:35:25-89
+53            </intent-filter>
+54
+55            <meta-data
+55-->D:\Android_DEV\app\src\main\AndroidManifest.xml:38:13-40:72
+56                android:name="android.accessibilityservice"
+56-->D:\Android_DEV\app\src\main\AndroidManifest.xml:39:17-60
+57                android:resource="@xml/accessibility_service_config" />
+57-->D:\Android_DEV\app\src\main\AndroidManifest.xml:40:17-69
+58        </service>
+59        <service
+59-->D:\Android_DEV\app\src\main\AndroidManifest.xml:43:9-50:19
+60            android:name="com.example.instagramdetector.overlay.OverlayService"
+60-->D:\Android_DEV\app\src\main\AndroidManifest.xml:44:13-51
+61            android:exported="false"
+61-->D:\Android_DEV\app\src\main\AndroidManifest.xml:45:13-37
+62            android:foregroundServiceType="specialUse" >
+62-->D:\Android_DEV\app\src\main\AndroidManifest.xml:46:13-55
+63            <property
+63-->D:\Android_DEV\app\src\main\AndroidManifest.xml:47:13-49:47
+64                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+64-->D:\Android_DEV\app\src\main\AndroidManifest.xml:48:17-76
+65                android:value="app_overlay" />
+65-->D:\Android_DEV\app\src\main\AndroidManifest.xml:49:17-44
+66        </service>
+67        <service
+67-->D:\Android_DEV\app\src\main\AndroidManifest.xml:52:9-59:19
+68            android:name="com.example.instagramdetector.service.UsageTimerService"
+68-->D:\Android_DEV\app\src\main\AndroidManifest.xml:53:13-54
+69            android:exported="false"
+69-->D:\Android_DEV\app\src\main\AndroidManifest.xml:54:13-37
+70            android:foregroundServiceType="specialUse" >
+70-->D:\Android_DEV\app\src\main\AndroidManifest.xml:55:13-55
+71            <property
+71-->D:\Android_DEV\app\src\main\AndroidManifest.xml:47:13-49:47
+72                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+72-->D:\Android_DEV\app\src\main\AndroidManifest.xml:48:17-76
+73                android:value="usage_timer" />
+73-->D:\Android_DEV\app\src\main\AndroidManifest.xml:49:17-44
+74        </service>
+75
+76        <activity
+76-->[androidx.compose.ui:ui-tooling-android:1.7.6] C:\Users\PHS\.gradle\caches\8.9\transforms\8cb7a251c53ef4a9f25cf98705612f93\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+77            android:name="androidx.compose.ui.tooling.PreviewActivity"
+77-->[androidx.compose.ui:ui-tooling-android:1.7.6] C:\Users\PHS\.gradle\caches\8.9\transforms\8cb7a251c53ef4a9f25cf98705612f93\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+78            android:exported="true" />
+78-->[androidx.compose.ui:ui-tooling-android:1.7.6] C:\Users\PHS\.gradle\caches\8.9\transforms\8cb7a251c53ef4a9f25cf98705612f93\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+79
+80        <provider
+80-->[androidx.emoji2:emoji2:1.3.0] C:\Users\PHS\.gradle\caches\8.9\transforms\1f24da04a8add76a5ca5c15d970eb8e7\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+81            android:name="androidx.startup.InitializationProvider"
+81-->[androidx.emoji2:emoji2:1.3.0] C:\Users\PHS\.gradle\caches\8.9\transforms\1f24da04a8add76a5ca5c15d970eb8e7\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+82            android:authorities="com.example.instagramdetector.androidx-startup"
+82-->[androidx.emoji2:emoji2:1.3.0] C:\Users\PHS\.gradle\caches\8.9\transforms\1f24da04a8add76a5ca5c15d970eb8e7\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+83            android:exported="false" >
+83-->[androidx.emoji2:emoji2:1.3.0] C:\Users\PHS\.gradle\caches\8.9\transforms\1f24da04a8add76a5ca5c15d970eb8e7\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+84            <meta-data
+84-->[androidx.emoji2:emoji2:1.3.0] C:\Users\PHS\.gradle\caches\8.9\transforms\1f24da04a8add76a5ca5c15d970eb8e7\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+85                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+85-->[androidx.emoji2:emoji2:1.3.0] C:\Users\PHS\.gradle\caches\8.9\transforms\1f24da04a8add76a5ca5c15d970eb8e7\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+86                android:value="androidx.startup" />
+86-->[androidx.emoji2:emoji2:1.3.0] C:\Users\PHS\.gradle\caches\8.9\transforms\1f24da04a8add76a5ca5c15d970eb8e7\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+87            <meta-data
+87-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\PHS\.gradle\caches\8.9\transforms\8bd5d0e900d41802b4903070e3578093\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+88                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+88-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\PHS\.gradle\caches\8.9\transforms\8bd5d0e900d41802b4903070e3578093\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+89                android:value="androidx.startup" />
+89-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\PHS\.gradle\caches\8.9\transforms\8bd5d0e900d41802b4903070e3578093\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+90            <meta-data
+90-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+91                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+91-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+92                android:value="androidx.startup" />
+92-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+93        </provider>
+94
+95        <receiver
+95-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+96            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+96-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+97            android:directBootAware="false"
+97-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+98            android:enabled="true"
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+99            android:exported="true"
+99-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+100            android:permission="android.permission.DUMP" >
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+101            <intent-filter>
+101-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+102                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+102-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+102-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+103            </intent-filter>
+104            <intent-filter>
+104-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+105                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+105-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+105-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+106            </intent-filter>
+107            <intent-filter>
+107-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+108                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+108-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+108-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+109            </intent-filter>
+110            <intent-filter>
+110-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+111                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+111-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+111-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\PHS\.gradle\caches\8.9\transforms\46aad925550b550249a9caeb4a2df702\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+112            </intent-filter>
+113        </receiver>
+114    </application>
+115
+116</manifest>

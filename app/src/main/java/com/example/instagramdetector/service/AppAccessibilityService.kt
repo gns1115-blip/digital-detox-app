@@ -3,6 +3,7 @@ package com.example.instagramdetector.service
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
 import com.example.instagramdetector.InstagramDetectionState
+import com.example.instagramdetector.detox.DetoxPrefs
 import com.example.instagramdetector.detection.MonitoredApps
 import com.example.instagramdetector.detection.ShortsReelsDetector
 import com.example.instagramdetector.detection.ShortsReelsWatchTracker
@@ -32,7 +33,7 @@ class AppAccessibilityService : AccessibilityService() {
             return
         }
 
-        if (AppLaunchBlocker.isBlocked(packageName)) {
+        if (DetoxPrefs.isProtectionEnabled(this) && AppLaunchBlocker.isBlocked(packageName)) {
             AccessibilityAppCloser.goHome()
             return
         }
@@ -55,6 +56,7 @@ class AppAccessibilityService : AccessibilityService() {
         InstagramDetectionState.onInstagramOpened(packageName)
 
         if (AppSessionGate.isSessionAllowed(packageName)) return
+        if (!DetoxPrefs.isProtectionEnabled(this)) return
         if (!canDrawOverlays()) return
         if (ShortsReelsWatchTracker.isBreakOverlayActive) return
 
@@ -74,6 +76,7 @@ class AppAccessibilityService : AccessibilityService() {
         ShortsReelsWatchTracker.onWatchStateChanged(inShortFormFeed)
 
         if (!ShortsReelsWatchTracker.shouldTriggerBreak()) return
+        if (!DetoxPrefs.isProtectionEnabled(this)) return
         if (!canDrawOverlays()) return
 
         OverlayController.showShortFormBreak(this, packageName)

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#E1306C</color>
+    <string name="accessibility_service_description">Instagram·YouTube 실행 확인, Reels/Shorts 시청 시간 추적을 위해 화면 구조를 분석합니다. 입력 내용은 저장하지 않습니다.</string>
+    <string name="accessibility_service_label">앱 사용 관리 (Instagram·YouTube)</string>
+    <string name="app_name">Instagram Detector</string>
+    <string name="overlay_notification_channel_description">Instagram 실행 시 확인 화면을 표시합니다.</string>
+    <string name="overlay_notification_channel_name">오버레이 서비스</string>
+    <string name="overlay_notification_text">오버레이가 표시 중입니다.</string>
+    <string name="overlay_notification_title">Instagram 확인 화면</string>
+    <string name="reels_break_notification_text">30초 동안 스크롤이 차단됩니다.</string>
+    <string name="reels_break_notification_title">Reels 휴식 안내</string>
+    <string name="timer_notification_channel_description">선택한 Instagram 사용 시간을 추적합니다.</string>
+    <string name="timer_notification_channel_name">사용 시간 타이머</string>
+    <string name="timer_notification_text">설정한 시간이 지나면 알려드립니다.</string>
+    <string name="timer_notification_title">사용 시간 측정 중</string>
+    <string name="usage_expired_notification_text">사용 시간이 종료되었습니다. 30초 동안 앱 실행이 차단됩니다.</string>
+    <style name="Theme.InstagramDetector" parent="android:Theme.Material.Light.NoActionBar"/>
+</resources>

@@ -23,6 +23,7 @@ import com.example.instagramdetector.R
 import com.example.instagramdetector.InstagramDetectionState
 import com.example.instagramdetector.datastore.OverlaySelectionRecord
 import com.example.instagramdetector.detection.ShortsReelsWatchTracker
+import com.example.instagramdetector.detox.DetoxPrefs
 import com.example.instagramdetector.service.UsageTimerController
 import com.example.instagramdetector.ui.MainActivity
 import com.example.instagramdetector.util.canDrawOverlays
@@ -58,6 +59,10 @@ class OverlayService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_SHOW -> {
+                if (!DetoxPrefs.isProtectionEnabled(this)) {
+                    stopSelf()
+                    return START_NOT_STICKY
+                }
                 if (!canDrawOverlays() || overlayMode == OverlayMode.SHORT_FORM_BREAK) {
                     stopSelf()
                     return START_NOT_STICKY
@@ -70,6 +75,10 @@ class OverlayService : Service() {
             }
 
             ACTION_SHOW_USAGE_TIME_EXPIRED -> {
+                if (!DetoxPrefs.isProtectionEnabled(this)) {
+                    stopSelf()
+                    return START_NOT_STICKY
+                }
                 if (!canDrawOverlays()) {
                     stopSelf()
                     return START_NOT_STICKY
@@ -89,6 +98,11 @@ class OverlayService : Service() {
             }
 
             ACTION_SHOW_SHORT_FORM_BREAK -> {
+                if (!DetoxPrefs.isProtectionEnabled(this)) {
+                    ShortsReelsWatchTracker.onBreakOverlayDismissed()
+                    stopSelf()
+                    return START_NOT_STICKY
+                }
                 if (!canDrawOverlays()) {
                     ShortsReelsWatchTracker.onBreakOverlayDismissed()
                     stopSelf()

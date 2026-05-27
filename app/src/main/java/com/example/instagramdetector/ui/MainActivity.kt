@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,13 +26,17 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,9 +50,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.instagramdetector.InstagramDetectionState
 import com.example.instagramdetector.InstagramDetectorApplication
+import com.example.instagramdetector.detox.DetoxPrefs
 import com.example.instagramdetector.util.canDrawOverlays
 import com.example.instagramdetector.util.createManageOverlayPermissionIntent
 import com.example.instagramdetector.util.isAppAccessibilityServiceEnabled
+import kotlinx.coroutines.delay
 import java.text.DateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -120,6 +127,18 @@ private fun InstagramDetectorScreen(
     val lastSelectedReason by InstagramDetectionState.lastSelectedReason.collectAsStateWithLifecycle()
     val lastReasonSelectedAtMillis by InstagramDetectionState.lastReasonSelectedAtMillis.collectAsStateWithLifecycle()
 
+    var detoxToggleEnabled by rememberSaveable {
+        mutableStateOf(DetoxPrefs.getUserToggleEnabled(context))
+    }
+    var nowMs by remember { mutableLongStateOf(System.currentTimeMillis()) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            nowMs = System.currentTimeMillis()
+            delay(1_000L)
+        }
+    }
+
     val overlayPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) {
@@ -138,11 +157,17 @@ private fun InstagramDetectorScreen(
                 isAccessibilityEnabled = context.isAppAccessibilityServiceEnabled()
                 canDrawOverlay = context.canDrawOverlays()
                 hasNotificationPermission = isNotificationPermissionGranted(context)
+                detoxToggleEnabled = DetoxPrefs.getUserToggleEnabled(context)
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
+
+    val protectionEnabled = DetoxPrefs.isProtectionEnabled(context, now = nowMs)
+    val remainingDisableMs = DetoxPrefs.remainingTempDisableMs(context, now = nowMs)
+    val remainingMinutes = TimeUnit.MILLISECONDS.toMinutes(remainingDisableMs)
+    val remainingSeconds = TimeUnit.MILLISECONDS.toSeconds(remainingDisableMs) % 60
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
@@ -159,6 +184,65 @@ private fun InstagramDetectorScreen(
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
             )
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            text = "Digital Detox Enabled",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Switch(
+                            checked = detoxToggleEnabled,
+                            onCheckedChange = { checked ->
+                                detoxToggleEnabled = checked
+                                DetoxPrefs.setUserToggleEnabled(context, checked)
+                                if (!checked) {
+                                    DetoxPrefs.clearTemporaryDisable(context)
+                                }
+                            },
+                        )
+                    }
+
+                    Text(
+                        text = if (protectionEnabled) "Protection Enabled" else "Protection Disabled",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (protectionEnabled) Color(0xFF2E7D32) else Color(0xFFC62828),
+                    )
+
+                    if (detoxToggleEnabled) {
+                        Button(
+                            onClick = {
+                                DetoxPrefs.disableForMinutes(context, minutes = 10, now = System.currentTimeMillis())
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = protectionEnabled,
+                        ) {
+                            Text("Disable for 10 minutes")
+                        }
+
+                        if (!protectionEnabled && remainingDisableMs > 0L) {
+                            Text(
+                                text = "Re-enables in ${remainingMinutes}m ${remainingSeconds}s",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+            }
 
             ServiceStatusCard(title = "접근성 서비스", isEnabled = isAccessibilityEnabled)
             ServiceStatusCard(title = "다른 앱 위에 표시", isEnabled = canDrawOverlay)
