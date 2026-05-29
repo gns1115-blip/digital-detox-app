@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -27,17 +28,23 @@ class UsageTimerService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var countdownJob: Job? = null
+    private var currentPackageName: String? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Android 8.0+ 에서는 startForegroundService 호출 후 반드시 startForeground를 호출해야 함
+        startAsForeground()
+
         when (intent?.action) {
             ACTION_START -> {
                 val packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME) ?: run {
+                    stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                     return START_NOT_STICKY
                 }
                 val durationMinutes = intent.getIntExtra(EXTRA_DURATION_MINUTES, 5)
+                currentPackageName = packageName
                 startCountdown(packageName, durationMinutes)
             }
 
@@ -54,57 +61,80 @@ class UsageTimerService : Service() {
 
     private fun startCountdown(packageName: String, durationMinutes: Int) {
         countdownJob?.cancel()
-        startAsForeground()
+        // startAsForeground()는 이미 onStartCommand에서 호출됨
 
         countdownJob = serviceScope.launch {
             delay(durationMinutes * 60_000L)
             onUsageTimeExpired(packageName)
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
         }
     }
 
     private fun onUsageTimeExpired(packageName: String) {
-        val app = application as InstagramDetectorApplication
-        val usageDurationMs = AppSessionGate.consumeSessionUsageDuration()
+        recordUsageAndStats(isExpired = true)
 
-        val protectionEnabled = DetoxPrefs.isProtectionEnabled(applicationContext)
-        if (protectionEnabled) {
+        if (DetoxPrefs.isProtectionEnabled(applicationContext)) {
             VibrationHelper.vibrate(applicationContext)
-            AppSessionGate.revokeSessionIfActive()
-            AccessibilityAppCloser.goHome()
-            AppLaunchBlocker.startBlock(AppLaunchBlocker.DEFAULT_BLOCK_SECONDS)
-        } else {
-            AppSessionGate.revokeSessionIfActive()
-            AppLaunchBlocker.clear()
-        }
-
-        serviceScope.launch(Dispatchers.IO) {
-            app.appStatsRepository.addUsageTime(usageDurationMs)
-            if (protectionEnabled) {
-                app.appStatsRepository.recordBlock()
+            
+            // 홈 화면 대신 우리 앱 시작 화면으로 복귀
+            val intent = Intent(this, com.example.instagramdetector.ui.MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             }
-        }
+            startActivity(intent)
 
-        if (protectionEnabled) {
+            AppLaunchBlocker.startBlock(AppLaunchBlocker.DEFAULT_BLOCK_SECONDS)
+            
             OverlayController.showUsageTimeExpired(
                 context = applicationContext,
                 packageName = packageName,
                 blockSeconds = AppLaunchBlocker.DEFAULT_BLOCK_SECONDS,
             )
         }
+
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     private fun stopCountdownAndSelf() {
+        recordUsageAndStats(isExpired = false)
         countdownJob?.cancel()
         countdownJob = null
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
+    private fun recordUsageAndStats(isExpired: Boolean) {
+        val usageDurationMs = AppSessionGate.consumeSessionUsageDuration()
+        if (usageDurationMs <= 0) return
+
+        val app = application as InstagramDetectorApplication
+        val protectionEnabled = DetoxPrefs.isProtectionEnabled(applicationContext)
+        
+        AppSessionGate.revokeSessionIfActive()
+        if (!isExpired) {
+            AppLaunchBlocker.clear()
+        }
+
+        serviceScope.launch(Dispatchers.IO) {
+            app.appStatsRepository.addUsageTime(usageDurationMs)
+            if (isExpired && protectionEnabled) {
+                app.appStatsRepository.recordBlock()
+            }
+        }
+    }
+
     private fun startAsForeground() {
         createNotificationChannelIfNeeded()
-        startForeground(NOTIFICATION_ID, buildNotification())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(
+                NOTIFICATION_ID,
+                buildNotification(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE,
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, buildNotification())
+        }
     }
 
     private fun createNotificationChannelIfNeeded() {

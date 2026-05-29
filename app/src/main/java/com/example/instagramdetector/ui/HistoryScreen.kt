@@ -16,8 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.instagramdetector.datastore.OverlaySelectionRecord
@@ -34,14 +36,19 @@ fun HistoryScreen(
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        containerColor = Color.Black,
         topBar = {
             TopAppBar(
-                title = { Text("최근 기록 (10개)") },
+                title = { Text("최근 기록", color = Color.White) },
                 navigationIcon = {
                     TextButton(onClick = onBack) {
-                        Text("뒤로")
+                        Text("뒤로", color = Color.White)
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White
+                )
             )
         },
     ) { innerPadding ->
@@ -54,9 +61,9 @@ fun HistoryScreen(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "저장된 기록이 없습니다.\nInstagram 실행 후 Overlay에서 이유를 선택해 주세요.",
+                    text = "저장된 기록이 없습니다.",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = Color.LightGray,
                 )
             }
         } else {
@@ -85,7 +92,10 @@ private fun HistoryRecordCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1A1A1A),
+            contentColor = Color.White
+        ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -95,15 +105,17 @@ private fun HistoryRecordCard(
                 text = "#$index  ${record.selectedReason.label}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
+                color = Color.White
             )
             Text(
                 text = formatTimestamp(record.timestamp),
                 style = MaterialTheme.typography.bodyMedium,
+                color = Color.LightGray
             )
             Text(
                 text = formatPackageLabel(record.packageName),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = Color.Gray,
             )
         }
     }
@@ -115,8 +127,8 @@ private fun formatTimestamp(timestampMillis: Long): String =
 
 private fun formatPackageLabel(packageName: String): String =
     when (packageName) {
-        MonitoredApps.INSTAGRAM -> "Instagram ($packageName)"
-        MonitoredApps.INSTAGRAM_LITE -> "Instagram Lite ($packageName)"
-        MonitoredApps.YOUTUBE -> "YouTube ($packageName)"
+        MonitoredApps.INSTAGRAM -> "Instagram"
+        MonitoredApps.INSTAGRAM_LITE -> "Instagram Lite"
+        MonitoredApps.YOUTUBE -> "YouTube"
         else -> packageName
     }

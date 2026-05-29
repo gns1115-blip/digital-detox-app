@@ -53,7 +53,7 @@ fun InstagramOverlayContent(
                     Modifier
                 },
             )
-            .background(Color(0xF0101010))
+            .background(Color.Black)
             .padding(horizontal = 28.dp, vertical = 48.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -111,7 +111,7 @@ private fun DurationSelectionContent(
 
     Text(
         text = "선택한 이유: ${reason.label}",
-        color = Color(0xFFB0BEC5),
+        color = Color.LightGray,
         fontSize = 16.sp,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -139,8 +139,8 @@ private fun TimeExpiredBlockContent(secondsRemaining: Int) {
     Spacer(modifier = Modifier.height(20.dp))
 
     Text(
-        text = "Instagram·YouTube 실행이\n${secondsRemaining}초 동안 차단됩니다.",
-        color = Color(0xFFB0BEC5),
+        text = "앱 실행이 ${secondsRemaining}초 동안 차단됩니다.",
+        color = Color.LightGray,
         fontSize = 16.sp,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -150,7 +150,7 @@ private fun TimeExpiredBlockContent(secondsRemaining: Int) {
 
     Text(
         text = "${secondsRemaining}초",
-        color = Color(0xFFFFCC80),
+        color = Color.White,
         fontSize = 42.sp,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
@@ -172,8 +172,8 @@ private fun ShortFormBreakContent(secondsRemaining: Int) {
     Spacer(modifier = Modifier.height(20.dp))
 
     Text(
-        text = "Reels/Shorts를 10분 이상 시청했습니다.",
-        color = Color(0xFFB0BEC5),
+        text = "숏폼 콘텐츠를 장시간 시청했습니다.",
+        color = Color.LightGray,
         fontSize = 16.sp,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -183,7 +183,7 @@ private fun ShortFormBreakContent(secondsRemaining: Int) {
 
     Text(
         text = "${secondsRemaining}초 동안 스크롤이 차단됩니다",
-        color = Color(0xFFFFCC80),
+        color = Color.White,
         fontSize = 20.sp,
         fontWeight = FontWeight.SemiBold,
         textAlign = TextAlign.Center,
@@ -194,7 +194,7 @@ private fun ShortFormBreakContent(secondsRemaining: Int) {
 
     Text(
         text = "잠시 눈을 쉬어 주세요.",
-        color = Color(0xFF90A4AE),
+        color = Color.Gray,
         fontSize = 15.sp,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
@@ -212,8 +212,8 @@ private fun OverlayActionButton(
             .fillMaxWidth()
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = Color.White,
+            containerColor = Color.White,
+            contentColor = Color.Black,
         ),
     ) {
         Text(

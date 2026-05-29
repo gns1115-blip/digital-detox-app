@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.instagramdetector.app-mergeDebugResources-47:/values-v30/values-v30.xml",
+            "outputFile": "com.example.instagramdetector.app-mergeDebugResources-54:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\PHS\\.gradle\\caches\\8.9\\transforms\\8c4d077cb4f4995d8288ac60fcf70faf\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
+                    "source": "C:\\Users\\PHS\\.gradle\\caches\\8.13\\transforms\\c7c88ef88afe724e7d1e56d051721b34\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

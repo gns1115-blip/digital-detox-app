@@ -22,6 +22,7 @@ data class DailyAppStats(
     val todayUsageTimeMs: Long,
     val blockCount: Int,
     val lastBlockAtMillis: Long?,
+    val focusStreak: Int
 )
 
 class AppStatsRepository(
@@ -54,7 +55,21 @@ class AppStatsRepository(
     private fun ensureToday(preferences: androidx.datastore.preferences.core.MutablePreferences) {
         val today = todayString()
         val savedDate = preferences[KEY_DATE]
+        
         if (savedDate != today) {
+            // Check streak
+            val lastDate = savedDate?.let { LocalDate.parse(it) }
+            val yesterday = LocalDate.now().minusDays(1)
+            
+            val currentStreak = preferences[KEY_FOCUS_STREAK] ?: 0
+            if (lastDate == yesterday) {
+                preferences[KEY_FOCUS_STREAK] = currentStreak + 1
+            } else if (lastDate != null) {
+                preferences[KEY_FOCUS_STREAK] = 1
+            } else {
+                preferences[KEY_FOCUS_STREAK] = 1
+            }
+
             preferences[KEY_DATE] = today
             preferences[KEY_USAGE_TIME_MS] = 0L
             preferences[KEY_BLOCK_COUNT] = 0
@@ -65,12 +80,15 @@ class AppStatsRepository(
     private fun toDailyStats(preferences: Preferences): DailyAppStats {
         val today = todayString()
         val savedDate = preferences[KEY_DATE]
+        val streak = preferences[KEY_FOCUS_STREAK] ?: 0
+        
         if (savedDate != today) {
             return DailyAppStats(
                 todayDate = today,
                 todayUsageTimeMs = 0L,
                 blockCount = 0,
                 lastBlockAtMillis = null,
+                focusStreak = streak
             )
         }
         return DailyAppStats(
@@ -78,6 +96,7 @@ class AppStatsRepository(
             todayUsageTimeMs = preferences[KEY_USAGE_TIME_MS] ?: 0L,
             blockCount = preferences[KEY_BLOCK_COUNT] ?: 0,
             lastBlockAtMillis = preferences[KEY_LAST_BLOCK_AT],
+            focusStreak = streak
         )
     }
 
@@ -89,5 +108,6 @@ class AppStatsRepository(
         private val KEY_USAGE_TIME_MS = longPreferencesKey("today_usage_time_ms")
         private val KEY_BLOCK_COUNT = intPreferencesKey("block_count")
         private val KEY_LAST_BLOCK_AT = longPreferencesKey("last_block_at")
+        private val KEY_FOCUS_STREAK = intPreferencesKey("focus_streak")
     }
 }

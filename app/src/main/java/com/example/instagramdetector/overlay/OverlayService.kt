@@ -6,12 +6,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.view.Gravity
 import android.view.WindowManager
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +26,7 @@ import com.example.instagramdetector.detection.ShortsReelsWatchTracker
 import com.example.instagramdetector.detox.DetoxPrefs
 import com.example.instagramdetector.service.UsageTimerController
 import com.example.instagramdetector.ui.MainActivity
+import com.example.instagramdetector.ui.DetectorTheme
 import com.example.instagramdetector.util.canDrawOverlays
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,17 +58,17 @@ class OverlayService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Android 8.0+ 에서는 startForegroundService 호출 후 반드시 startForeground를 호출해야 함
+        // 그렇지 않으면 "Context.startForegroundService() did not then call Service.startForeground()" 에러 발생
+        startAsForeground()
+
         when (intent?.action) {
             ACTION_SHOW -> {
-                if (!DetoxPrefs.isProtectionEnabled(this)) {
+                if (!DetoxPrefs.isProtectionEnabled(this) || !canDrawOverlays() || overlayMode != OverlayMode.NONE) {
+                    stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                     return START_NOT_STICKY
                 }
-                if (!canDrawOverlays() || overlayMode == OverlayMode.SHORT_FORM_BREAK) {
-                    stopSelf()
-                    return START_NOT_STICKY
-                }
-                startAsForeground()
                 overlayMode = OverlayMode.INTENT
                 blockedPackageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
                 overlayStep = OverlayStep.SelectReason
@@ -75,16 +76,12 @@ class OverlayService : Service() {
             }
 
             ACTION_SHOW_USAGE_TIME_EXPIRED -> {
-                if (!DetoxPrefs.isProtectionEnabled(this)) {
-                    stopSelf()
-                    return START_NOT_STICKY
-                }
-                if (!canDrawOverlays()) {
+                if (!DetoxPrefs.isProtectionEnabled(this) || !canDrawOverlays()) {
+                    stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                     return START_NOT_STICKY
                 }
                 dismissOverlay()
-                startAsForeground()
                 overlayMode = OverlayMode.TIME_EXPIRED_BLOCK
                 blockedPackageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
                 val blockSeconds = intent.getIntExtra(EXTRA_BLOCK_DURATION_SECONDS, DEFAULT_SCROLL_BLOCK_SECONDS)
@@ -98,18 +95,13 @@ class OverlayService : Service() {
             }
 
             ACTION_SHOW_SHORT_FORM_BREAK -> {
-                if (!DetoxPrefs.isProtectionEnabled(this)) {
+                if (!DetoxPrefs.isProtectionEnabled(this) || !canDrawOverlays()) {
                     ShortsReelsWatchTracker.onBreakOverlayDismissed()
-                    stopSelf()
-                    return START_NOT_STICKY
-                }
-                if (!canDrawOverlays()) {
-                    ShortsReelsWatchTracker.onBreakOverlayDismissed()
+                    stopForeground(STOP_FOREGROUND_REMOVE)
                     stopSelf()
                     return START_NOT_STICKY
                 }
                 dismissOverlay()
-                startAsForeground()
                 overlayMode = OverlayMode.SHORT_FORM_BREAK
                 blockedPackageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
                 val blockSeconds = intent.getIntExtra(EXTRA_BLOCK_DURATION_SECONDS, DEFAULT_SCROLL_BLOCK_SECONDS)
@@ -177,7 +169,15 @@ class OverlayService : Service() {
 
     private fun startAsForeground() {
         createNotificationChannelIfNeeded()
-        startForeground(NOTIFICATION_ID, buildNotification())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(
+                NOTIFICATION_ID,
+                buildNotification(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE,
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, buildNotification())
+        }
     }
 
     private fun showOverlay(blockTouches: Boolean) {
@@ -188,7 +188,7 @@ class OverlayService : Service() {
                 androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnDetachedFromWindow,
             )
             setContent {
-                MaterialTheme {
+                DetectorTheme {
                     val step = when (overlayMode) {
                         OverlayMode.TIME_EXPIRED_BLOCK ->
                             OverlayStep.TimeExpiredBlock(blockSecondsRemaining)
@@ -199,6 +199,10 @@ class OverlayService : Service() {
                     InstagramOverlayContent(
                         step = step,
                         onReasonSelected = { reason ->
+                            overlayStep = OverlayStep.SelectReason // Step back if needed or stay. Logic revised below
+                            // 실제로는 SelectDuration으로 가야 함. 
+                            // 이미 InstagramOverlayContent 내부에서 onReasonSelected를 통해 step 전환을 처리하므로 
+                            // 여기서는 step 상태 업데이트만 수행
                             overlayStep = OverlayStep.SelectDuration(reason)
                         },
                         onDurationSelected = { duration ->
@@ -215,15 +219,22 @@ class OverlayService : Service() {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN or
+                if (blockTouches) 0 else WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT,
         ).apply {
             gravity = Gravity.TOP or Gravity.START
         }
 
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        windowManager?.addView(composeView, layoutParams)
-        overlayView = composeView
+        try {
+            windowManager?.addView(composeView, layoutParams)
+            overlayView = composeView
+        } catch (e: Exception) {
+            e.printStackTrace()
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
     }
 
     private fun onSessionConfigured(duration: UsageDuration) {
@@ -258,7 +269,9 @@ class OverlayService : Service() {
 
     private fun dismissOverlay() {
         overlayView?.let { view ->
-            windowManager?.removeView(view)
+            try {
+                windowManager?.removeView(view)
+            } catch (e: Exception) {}
         }
         overlayView = null
         blockedPackageName = null
